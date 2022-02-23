@@ -32,3 +32,6 @@ cd source_code_path
 ```bash
 python main.py <fasta_sequence_file_1> <fasta_sequence_file_2> ...
 ```
+
+## Results
+The results of the references genomes, E. coli and S. cerevisiae, are presented in "output" folder.
