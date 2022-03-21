@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 PROSITE_URL = "https://prosite.expasy.org/cgi-bin/prosite/PSScan.cgi"
 PROSITE_PROFILES_URL = "https://prosite.expasy.org/cgi-bin/prosite/nicedoc.pl?"
 
-PROSITE_HIT_KEYWORDS = ['transport', 'channel', 'permease', 'pump', 'facilitator', 'symporter', 'uniporter', 'antiporter', 'porin', 'carrier', 'influx', 'eflux', 'import', 'export']
+PROSITE_HIT_KEYWORDS = ['transport', 'channel', 'permease', 'pump', 'facilitator', 'symporter', 'uniporter', 'antiporter', 'porin', 'carrier', 'influx', 'eflux', 'import', 'export', 'importer', 'exporter', 'uptake']
 
 PROSITE_PENALTY_KEYWORDS = ['transfer', 'enzyme', 'sensor', 'transferase']
 

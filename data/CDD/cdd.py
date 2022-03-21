@@ -10,7 +10,7 @@ CDD_URL = "https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi"
 
 CDD_HIT_DESCRIPTION_URL = "https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?ascbin=8&maxaln=10&seltype=2"
 
-CDD_HIT_KEYWORDS = ['transport', 'channel', 'permease', 'pump', 'facilitator', 'symporter', 'uniporter', 'antiporter', 'porin', 'carrier', 'influx', 'eflux', 'import', 'export']
+CDD_HIT_KEYWORDS = ['transport', 'channel', 'permease', 'pump', 'facilitator', 'symporter', 'uniporter', 'antiporter', 'porin', 'carrier', 'influx', 'eflux', 'import', 'export', 'importer', 'exporter', 'uptake']
 
 CDD_PENALTY_KEYWORDS = ['transfer', 'enzyme', 'sensor', 'transferase']
 

@@ -4,7 +4,7 @@ import Utils.messages as Messages
 
 # No TMHMM: 5 ou mais TMH's atribuídos 100% dos 20%;  entre 3 a 5 TMH's 50% dos 20%
 
-# Relativamente à estrutura da proteína no geral (TMHMM e Pred-TMBB): se se verificar ambas as estruturas => incremento de 5% dos 20%; se não tiver nenhuma das estruturas penalizar em 40% no Score final
+# Relativamente à estrutura da proteína no geral (TMHMM e Pred-TMBB): se se verificar ambas as estruturas => incremento de 5% dos 20%; se não tiver nenhuma das estruturas penalizar em 5% no Score final
 
 # Keywords do CDD: 
 #     sensor e binding leva a penalização de 20% no Score final
@@ -48,14 +48,14 @@ def generate(tmhmm, tmbb, prosite, cdd):
     return final_score_perc
 
 def calculate_structure_final_percentage(tmhmm_percentage, tmbb_percentage):
-# Relativamente à estrutura da proteína no geral (TMHMM e Pred-TMBB): se se verificar ambas as estruturas => incremento de 5% dos 20%; se não tiver nenhuma das estruturas penalizar em 40% no Score final
+# Relativamente à estrutura da proteína no geral (TMHMM e Pred-TMBB): se se verificar ambas as estruturas => incremento de 5% dos 20%; se não tiver nenhuma das estruturas penalizar em 5% no Score final
 
     result = max(tmhmm_percentage, tmbb_percentage)
     
     if tmhmm_percentage > 0 and tmbb_percentage > 0:
         return 0.25
     elif tmhmm_percentage == 0 and tmbb_percentage == 0:
-        return -0.2 # deve ter uma penalização de 40% sobre a FF
+        return -0.05 # deve ter uma penalização de 5% 
 
     return result * 0.2
 
@@ -65,10 +65,10 @@ def calculate_tmhmm_percentage(tmhmm):
 
     result = 0
 
-    if tmhs >= 5:
+    if tmhs >= 6:
         result = 1
 
-    if tmhs < 5 and tmhs >= 3 :
+    if tmhs < 6 and tmhs >= 3 :
         result = 0.5
 
     tmhmm.set_percentage(result)
@@ -126,24 +126,10 @@ def calculate_final_prosite_percentage(prosite):
             hit.set_percentage(best_hit_perc)
     
     percentage_final = percentage_final*best_hit_perc
+
     keywords = list(set(keywords))
 
-    if len(keywords) > 0:
-        penalty = 0
-        if keywords.count("enzyme") or keywords.count("transferase"):
-            penalty = -0.4
-        elif keywords.count("sensor") or keywords.count("transfer"):
-            penalty = -0.2
-
-        percentage_final += penalty
-
-        if keywords.count("antiporter") or keywords.count("symporter") or keywords.count("permease") :
-            percentage_final += 0.15
-    else:
-        percentage_final = 0
-
-    if percentage_final < 0:
-        percentage_final = 0
+    percentage_final = calculate_final_percentage_with_keywords(percentage_final, keywords)
 
     prosite.set_percentage(percentage_final)
 
@@ -189,23 +175,32 @@ def calculate_final_cdd_percentage(cdd):
 
     keywords = list(set(keywords))
 
-    if len(keywords) > 0:
-        penalty = 0
-        if keywords.count("enzyme") or keywords.count("transferase"):
-            penalty = -0.4
-        elif keywords.count("sensor") or keywords.count("transfer"):
-            penalty = -0.2
-
-        percentage_final += penalty
-
-        if keywords.count("antiporter") or keywords.count("symporter") or keywords.count("permease") :
-            percentage_final += 0.15
-    else:
-        percentage_final = 0
-
-    if percentage_final < 0:
-        percentage_final = 0
+    percentage_final = calculate_final_percentage_with_keywords(percentage_final, keywords)
 
     cdd.set_percentage(percentage_final)
 
     return percentage_final
+
+def calculate_final_percentage_with_keywords(hit_percentage, keywords):
+    result = 0
+    penalty = 0
+
+    if len(keywords) > 0:
+        if keywords.count("enzyme") or keywords.count("transferase"):
+            penalty = -0.4
+        elif keywords.count("sensor") or keywords.count("transfer"):
+            penalty += -0.2
+
+        if keywords.count("antiporter") or keywords.count("symporter") or keywords.count("permease") :
+            penalty += 0.15
+
+        # Se penalty positivo ou negativo a formula deve ter em conta essa questão
+        if penalty >= 0:
+            result = hit_percentage + (hit_percentage * penalty)
+        else:
+            result = hit_percentage - (hit_percentage * (penalty * -1))
+
+    if result < 0:
+        result = 0
+
+    return result
