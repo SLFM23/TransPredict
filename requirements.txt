@@ -1,0 +1,4 @@
+requests
+biopython
+tmhmm.py 
+beautifulsoup4
